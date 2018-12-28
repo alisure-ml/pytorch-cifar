@@ -23,10 +23,11 @@ class VGG(nn.Module):
         out = self.classifier(out)
         return out
 
-    def _make_layers(self, cfg):
+    @staticmethod
+    def _make_layers(cfg_vgg):
         layers = []
         in_channels = 3
-        for x in cfg:
+        for x in cfg_vgg:
             if x == 'M':
                 layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
             else:
@@ -36,6 +37,8 @@ class VGG(nn.Module):
                 in_channels = x
         layers += [nn.AvgPool2d(kernel_size=1, stride=1)]
         return nn.Sequential(*layers)
+
+    pass
 
 
 def test():

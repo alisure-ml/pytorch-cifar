@@ -1,4 +1,5 @@
-'''Some helper functions for PyTorch, including:
+'''
+Some helper functions for PyTorch, including:
     - get_mean_and_std: calculate the mean and std value of dataset.
     - msr_init: net parameter initialization.
     - progress_bar: progress bar mimic xlua.progress.
@@ -43,8 +44,6 @@ def init_params(net):
                 init.constant(m.bias, 0)
 
 
-# _, term_width = os.popen('stty size', 'r').read().split()
-# term_width = int(term_width)
 term_width = 500
 
 TOTAL_BAR_LENGTH = 65.
@@ -127,3 +126,8 @@ def format_time(seconds):
     if f == '':
         f = '0ms'
     return f
+
+
+def print_info(info):
+    print("{} {}".format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), info))
+    pass

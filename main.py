@@ -1,11 +1,10 @@
 from __future__ import print_function
 import os
-import argparse
 import torchvision
 from models import *
 import torch.nn as nn
 import torch.optim as optim
-from utils import progress_bar
+from utils import print_info
 import torch.backends.cudnn as cudnn
 import torchvision.transforms as transforms
 
@@ -28,10 +27,11 @@ class Runner(object):
         # net = ShuffleNetV2()
         """
         self.root_path = root_path
+        self.model = model
         self.batch_size = batch_size
-
         self.lr = lr
-        self.checkpoint_path = "./checkpoint/{}".format(name)
+        self.name = name
+        self.checkpoint_path = "./checkpoint/{}".format(self.name)
 
         self.classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -39,7 +39,7 @@ class Runner(object):
         self.best_acc = 0
         self.start_epoch = 0
 
-        self.net = self._build(model)
+        self.net = self._build(self.model)
         self.criterion = nn.CrossEntropyLoss()
         self.optimizer = optim.SGD(self.net.parameters(), lr=self.lr, momentum=0.9, weight_decay=5e-4)
 
@@ -47,7 +47,7 @@ class Runner(object):
         pass
 
     def _data(self):
-        print('==> Preparing data..')
+        print_info('==> Preparing data..')
         transform_train = transforms.Compose([transforms.RandomCrop(32, padding=4),
                                               transforms.RandomHorizontalFlip(),
                                               transforms.ToTensor(),
@@ -64,7 +64,7 @@ class Runner(object):
         return _train_loader, _test_loader
 
     def _build(self, model):
-        print('==> Building model..')
+        print_info('==> Building model..')
         net = model()
 
         net = net.to(self.device)
@@ -74,14 +74,29 @@ class Runner(object):
             pass
         return net
 
-    def _change_lr(self, _lr):
-        for param_group in self.optimizer.param_groups:
-            param_group['lr'] = _lr
+    def _change_lr(self, epoch):
+
+        def __change_lr(_lr):
+            for param_group in self.optimizer.param_groups:
+                param_group['lr'] = _lr
+            pass
+
+        if 0 <= epoch < 100:
+            __change_lr(self.lr)
+        elif 100 <= epoch < 200:
+            __change_lr(self.lr / 10)
+        elif 200 <= epoch:
+            __change_lr(self.lr / 100)
+
+        pass
+
+    def info(self):
+        print_info("model={} batch size={} lr={} name={}".format(str(self.model), self.batch_size, self.lr, self.name))
         pass
 
     def resume(self, is_resume):
         if is_resume and os.path.isdir(self.checkpoint_path):
-            print('==> Resuming from checkpoint..')
+            print_info('==> Resuming from checkpoint..')
             checkpoint = torch.load('{}/ckpt.t7'.format(self.checkpoint_path))
             self.net.load_state_dict(checkpoint['net'])
             self.best_acc = checkpoint['acc']
@@ -89,13 +104,11 @@ class Runner(object):
         pass
 
     def train(self, epoch, change_lr=False):
-        print('\nEpoch: %d' % epoch)
+        print()
+        print_info('Epoch: %d' % epoch)
 
-        if epoch == 150 and change_lr:
-            self._change_lr(self.lr / 10)
-        elif epoch == 250:
-            self._change_lr(self.lr / 100)
-            pass
+        if change_lr:
+            self._change_lr(epoch)
 
         self.net.train()
         train_loss = 0
@@ -113,10 +126,9 @@ class Runner(object):
             _, predicted = outputs.max(1)
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
-
-            progress_bar(batch_idx, len(self.train_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-                         % (train_loss / (batch_idx + 1), 100. * correct / total, correct, total))
             pass
+        print_info('Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                   % (train_loss / len(self.train_loader), 100. * correct / total, correct, total))
         pass
 
     def test(self, epoch):
@@ -134,23 +146,23 @@ class Runner(object):
                 _, predicted = outputs.max(1)
                 total += targets.size(0)
                 correct += predicted.eq(targets).sum().item()
-
-                progress_bar(batch_idx, len(self.test_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-                             % (test_loss / (batch_idx + 1), 100. * correct / total, correct, total))
                 pass
             pass
+
+        print_info('Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                   % (test_loss / len(self.test_loader), 100. * correct / total, correct, total))
 
         # Save checkpoint.
         acc = 100. * correct / total
         if acc > self.best_acc:
-            print('Saving..')
+            print_info('Saving..')
             state = {'net': self.net.state_dict(), 'acc': acc, 'epoch': epoch}
             if not os.path.isdir(self.checkpoint_path):
                 os.mkdir(self.checkpoint_path)
             torch.save(state, '{}/ckpt.t7'.format(self.checkpoint_path))
             self.best_acc = acc
             pass
-        print(self.best_acc)
+        print_info("best_acc={} acc={}".format(self.best_acc, acc))
         pass
 
     pass
@@ -158,11 +170,12 @@ class Runner(object):
 
 if __name__ == '__main__':
 
-    runner = Runner(root_path='/data/DATASET/cifar', model=VGG, batch_size=128, lr=0.1, name="vgg")
+    runner = Runner(model=MobileNetV2, batch_size=128, lr=0.01, name="MobileNetV2")
+    runner.info()
     runner.resume(is_resume=True)
 
-    for _epoch in range(runner.start_epoch, 350):
-        runner.train(_epoch)
+    for _epoch in range(runner.start_epoch, 300):
+        runner.train(_epoch, change_lr=True)
         runner.test(_epoch)
         pass
     pass
