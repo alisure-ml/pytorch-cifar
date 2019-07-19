@@ -168,6 +168,8 @@ class Runner(object):
 
 if __name__ == '__main__':
 
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # 1
+
     runner = Runner(model=DPN92, batch_size=128, lr=0.01, name="DPN92")
     runner.info()
     runner.resume(is_resume=True)
