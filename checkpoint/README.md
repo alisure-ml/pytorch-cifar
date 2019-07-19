@@ -14,7 +14,7 @@ batch size = 128
 | [ResNeXt29(2x64d)](https://arxiv.org/abs/1611.05431)  | 94.82%      |
 | [DenseNet121](https://arxiv.org/abs/1608.06993)       | 95.04%      |
 | [PreActResNet18](https://arxiv.org/abs/1603.05027)    | 95.11%      |
-| [DPN92](https://arxiv.org/abs/1707.01629)             | 95.16%      |
+| [DPN92](https://arxiv.org/abs/1707.01629)             | 94.92%      |
 
 ## Learning rate adjustment
 I manually change the `lr` during training:

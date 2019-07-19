@@ -168,7 +168,7 @@ class Runner(object):
 
 if __name__ == '__main__':
 
-    runner = Runner(model=VGG, batch_size=128, lr=0.01, name="VGG")
+    runner = Runner(model=DPN92, batch_size=128, lr=0.01, name="DPN92")
     runner.info()
     runner.resume(is_resume=True)
 
