@@ -170,12 +170,12 @@ class Runner(object):
 
 if __name__ == '__main__':
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # 1
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # 1
 
     _root_path = "/home/ubuntu/ALISURE/data/cifar"
     _num_classes = 100
-    runner = Runner(root_path=_root_path, num_classes=_num_classes, model=ResNet18,
-                    batch_size=128, lr=0.01, name="ResNet18")
+    runner = Runner(root_path=_root_path, num_classes=_num_classes, model=ResNet101,
+                    batch_size=128, lr=0.01, name="ResNet101")
     runner.info()
     runner.resume(is_resume=True)
 
