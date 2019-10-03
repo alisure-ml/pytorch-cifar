@@ -401,7 +401,7 @@ class RunnerMP(object):
 class RunnerSingle(object):
 
     def __init__(self, lr=0.1, print_freq=10, start_epoch=0, epochs=15,
-                 batch_size=256, workers=8, momentum=0.9, weight_decay=1e-4, arch="resnet18",
+                 batch_size=256, workers=30, momentum=0.9, weight_decay=1e-4, arch="resnet18",
                  data_root="/home/z840/data/DATASET/ILSVRC2015/Data/CLS-LOC",
                  resume_filename="./checkpoint_imagenet/ResNet18/checkpoint_best.pth.tar",
                  checkpoint_filename="./checkpoint_imagenet/ResNet18/checkpoint.pth.tar",
@@ -467,13 +467,13 @@ class RunnerSingle(object):
 
         train_dataset = datasets.ImageFolder(train_dir, transforms.Compose([
             transforms.RandomResizedCrop(224), transforms.RandomHorizontalFlip(), transforms.ToTensor(), normalize]))
-        train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True,
-                                                   num_workers=self.workers, pin_memory=True)
+        train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size,
+                                                   shuffle=True, num_workers=self.workers)
 
         test_dataset = datasets.ImageFolder(val_dir, transforms.Compose([
             transforms.Resize(256), transforms.CenterCrop(224), transforms.ToTensor(), normalize]))
         val_loader = torch.utils.data.DataLoader(test_dataset, batch_size=self.batch_size,
-                                                 shuffle=False, num_workers=self.workers, pin_memory=True)
+                                                 shuffle=False, num_workers=self.workers)
         return train_loader, val_loader
 
     def _save_checkpoint(self, state, is_best):
@@ -602,8 +602,5 @@ class RunnerSingle(object):
 
 
 if __name__ == '__main__':
-    """
-    https://www.cnblogs.com/king-lps/p/10936374.html
-    """
     RunnerSingle().train()
     pass
