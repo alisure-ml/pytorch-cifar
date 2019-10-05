@@ -403,7 +403,7 @@ class RunnerSingle(object):
     def __init__(self, lr=0.1, print_freq=10, start_epoch=0, epochs=15,
                  batch_size=256, workers=30, momentum=0.9, weight_decay=1e-4, arch="resnet18",
                  data_root="/home/z840/data/DATASET/ILSVRC2015/Data/CLS-LOC",
-                 resume_filename="./checkpoint_imagenet/ResNet18/checkpoint_best.pth.tar",
+                 resume_filename="./checkpoint_imagenet/ResNet18/checkpoint.pth.tar",
                  checkpoint_filename="./checkpoint_imagenet/ResNet18/checkpoint.pth.tar",
                  best_checkpoint_filename="./checkpoint_imagenet/ResNet18/checkpoint_best.pth.tar"):
         self.resume_filename = resume_filename
@@ -560,7 +560,7 @@ class RunnerSingle(object):
 
             self._save_checkpoint({'epoch': epoch + 1, 'arch': self.arch,
                                    'state_dict': self.model.state_dict(), 'best_acc1': self.best_acc1,
-                                   'optimizer': self.optimizer.state_dict()}, acc1 > self.best_acc1)
+                                   'optimizer': self.optimizer.state_dict()}, acc1 >= self.best_acc1)
             pass
         pass
 
