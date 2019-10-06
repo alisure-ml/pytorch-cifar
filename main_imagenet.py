@@ -19,6 +19,10 @@ import torchvision.datasets as datasets
 from torch import multiprocessing as mp
 import torchvision.transforms as transforms
 
+"""
+https://github.com/pytorch/examples/tree/master/imagenet
+"""
+
 
 class AverageMeter(object):
 
@@ -400,14 +404,14 @@ class RunnerMP(object):
 
 class RunnerSingle(object):
 
-    def __init__(self, lr=0.1, print_freq=10, start_epoch=0, epochs=15,
+    def __init__(self, lr=0.1, print_freq=10, start_epoch=0, epochs=90,
                  batch_size=256, workers=30, momentum=0.9, weight_decay=1e-4, arch="resnet18",
                  data_root="/home/z840/data/DATASET/ILSVRC2015/Data/CLS-LOC",
                  resume_filename="./checkpoint_imagenet/ResNet18/checkpoint.pth.tar",
                  checkpoint_filename="./checkpoint_imagenet/ResNet18/checkpoint.pth.tar",
                  best_checkpoint_filename="./checkpoint_imagenet/ResNet18/checkpoint_best.pth.tar"):
         self.resume_filename = resume_filename
-        self.checkpoint_filename = checkpoint_filename
+        self.checkpoint_filename = Tools.new_dir(checkpoint_filename)
         self.best_checkpoint_filename = best_checkpoint_filename
 
         self.lr = lr
@@ -484,7 +488,7 @@ class RunnerSingle(object):
 
     def _adjust_learning_rate(self, epoch):
         """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
-        lr = self.lr * (0.1 ** (epoch // 5))
+        lr = self.lr * (0.1 ** (epoch // 30))
         Tools.print("epoch={} lr={}".format(epoch, lr))
         for param_group in self.optimizer.param_groups:
             param_group['lr'] = lr
@@ -602,5 +606,14 @@ class RunnerSingle(object):
 
 
 if __name__ == '__main__':
-    RunnerSingle().train()
+    # _data_root = "/home/z840/data/DATASET/ILSVRC2015/Data/CLS-LOC"
+    _data_root = "/media/z840/ALISURE/data/DATASET/ILSVRC2015/Data/CLS-LOC"
+    _arch = ["resnet18", 0.1, 256, 28, "resnet18_2"]
+    # _arch = ["vgg19", 0.01, 64, 28, "vgg19"]
+    RunnerSingle(lr=_arch[1], print_freq=100, start_epoch=0, epochs=90,
+                 batch_size=_arch[2], workers=_arch[3], momentum=0.9,
+                 weight_decay=1e-4, arch=_arch[0], data_root=_data_root,
+                 resume_filename="./checkpoint_imagenet/{}/checkpoint.pth.tar".format(_arch[4]),
+                 checkpoint_filename="./checkpoint_imagenet/{}/checkpoint.pth.tar".format(_arch[4]),
+                 best_checkpoint_filename="./checkpoint_imagenet/{}/checkpoint_best.pth.tar".format(_arch[4])).train()
     pass
