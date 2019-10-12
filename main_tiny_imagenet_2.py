@@ -234,15 +234,16 @@ class RunnerSingle(object):
         val_dir = os.path.join(self.data_root, 'val_new')
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
-        train_dataset = datasets.ImageFolder(train_dir, transforms.Compose([
-            transforms.RandomResizedCrop(self.output_size),
-            transforms.RandomHorizontalFlip(), transforms.ToTensor(), normalize]))
+        transform_train = transforms.Compose([transforms.RandomResizedCrop(self.output_size),
+                                              transforms.RandomHorizontalFlip(), transforms.ToTensor(), normalize])
+        transform_test = transforms.Compose([transforms.Resize(self.output_size),
+                                             transforms.CenterCrop(self.output_size), transforms.ToTensor(), normalize])
+
+        train_dataset = datasets.ImageFolder(train_dir, transform_train)
         train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size,
                                                    shuffle=True, num_workers=self.workers)
 
-        test_dataset = datasets.ImageFolder(val_dir, transforms.Compose([
-            transforms.Resize(self.output_size),
-            transforms.CenterCrop(self.output_size), transforms.ToTensor(), normalize]))
+        test_dataset = datasets.ImageFolder(val_dir, transform_test)
         val_loader = torch.utils.data.DataLoader(test_dataset, batch_size=self.batch_size,
                                                  shuffle=False, num_workers=self.workers)
         return train_loader, val_loader

@@ -4,6 +4,7 @@ I'm playing with [PyTorch](http://pytorch.org/) on the CIFAR10 dataset.
 
 
 ## Learning rate adjustment
+
 I manually change the `lr` during training:
 - `0.1` for epoch `[0,150)`
 - `0.01` for epoch `[150,250)`

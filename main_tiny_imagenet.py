@@ -159,15 +159,16 @@ class RunnerSingle(object):
         val_dir = os.path.join(self.data_root, 'val_new')
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
-        train_dataset = datasets.ImageFolder(train_dir, transforms.Compose([
-            transforms.RandomResizedCrop(self.output_size),
-            transforms.RandomHorizontalFlip(), transforms.ToTensor(), normalize]))
+        transform_train = transforms.Compose([transforms.RandomResizedCrop(self.output_size),
+                                              transforms.RandomHorizontalFlip(), transforms.ToTensor(), normalize])
+        transform_test = transforms.Compose([transforms.Resize(self.output_size),
+                                             transforms.CenterCrop(self.output_size), transforms.ToTensor(), normalize])
+
+        train_dataset = datasets.ImageFolder(train_dir, transform_train)
         train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=self.batch_size,
                                                    shuffle=True, num_workers=self.workers)
 
-        test_dataset = datasets.ImageFolder(val_dir, transforms.Compose([
-            transforms.Resize(self.output_size),
-            transforms.CenterCrop(self.output_size), transforms.ToTensor(), normalize]))
+        test_dataset = datasets.ImageFolder(val_dir, transform_test)
         val_loader = torch.utils.data.DataLoader(test_dataset, batch_size=self.batch_size,
                                                  shuffle=False, num_workers=self.workers)
         return train_loader, val_loader
@@ -330,8 +331,8 @@ class RunnerSingle(object):
 
 def main():
     _data_root = "/home/z840/ALISURE/Data/tiny-imagenet-200"
-    # _arg = ["resnet18", 0.1, 256, 28, "resnet18", 64]
-    _arg = ["resnet18", 0.1, 256, 28, "resnet18_3", 224]
+    _arg = ["resnet18", 0.1, 256, 28, "resnet18", 64]
+    # _arg = ["resnet18", 0.1, 256, 28, "resnet18_3", 224]
     RunnerSingle(lr=_arg[1], print_freq=50, start_epoch=0, epochs=90,
                  batch_size=_arg[2], workers=_arg[3], momentum=0.9, output_size=_arg[5], num_classes=200,
                  weight_decay=1e-4, arch=_arg[0], data_root=_data_root,
