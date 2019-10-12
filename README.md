@@ -2,16 +2,6 @@
 
 I'm playing with [PyTorch](http://pytorch.org/) on the CIFAR10 dataset.
 
-## Pros & cons
-Pros:
-- Built-in data loading and augmentation, very nice!
-- Training is fast, maybe even a little bit faster.
-- Very memory efficient!
-
-Cons:
-- No progress bar, sad :(
-- No built-in log.
-
 
 ## Learning rate adjustment
 I manually change the `lr` during training:
@@ -22,17 +12,32 @@ I manually change the `lr` during training:
 Resume the training with `python main.py --resume --lr=0.01`
 
 
-## Accuracy
-| Model                                               | cifar10 | cifar100 | ImageNet Top1 | ImageNet Top5 |
-| :-------------------------------------------------: | ------- | -------- | ------------- | ------------- |
-| [VGG16](https://arxiv.org/abs/1409.1556)            |  92.64  |          |               |               |
-| [ResNet18](https://arxiv.org/abs/1512.03385)        |  93.02  |  76.51   |     64.33     |     85.73     |
-| [ResNet50](https://arxiv.org/abs/1512.03385)        |  93.62  |          |               |               |
-| [ResNet101](https://arxiv.org/abs/1512.03385)       |  93.75  |          |               |               |
-| [MobileNetV2](https://arxiv.org/abs/1801.04381)     |  94.43  |          |               |               |
-| [ResNeXt29(32x4d)](https://arxiv.org/abs/1611.05431)|  94.73  |          |               |               |
-| [ResNeXt29(2x64d)](https://arxiv.org/abs/1611.05431)|  94.82  |          |               |               |
-| [DenseNet121](https://arxiv.org/abs/1608.06993)     |  95.04  |          |               |               |
-| [PreActResNet18](https://arxiv.org/abs/1603.05027)  |  95.11  |          |               |               |
-| [DPN92](https://arxiv.org/abs/1707.01629)           |  95.16  |          |               |               |
+## cifar Accuracy
+| Model                                               | cifar10 | cifar100 |
+| :-------------------------------------------------: | ------- | -------- |
+| [VGG16](https://arxiv.org/abs/1409.1556)            |  92.64  |          |
+| [ResNet18](https://arxiv.org/abs/1512.03385)        |  93.02  |  76.51   |
+| [ResNet50](https://arxiv.org/abs/1512.03385)        |  93.62  |          |
+| [ResNet101](https://arxiv.org/abs/1512.03385)       |  93.75  |          |
+| [MobileNetV2](https://arxiv.org/abs/1801.04381)     |  94.43  |          |
+| [ResNeXt29(32x4d)](https://arxiv.org/abs/1611.05431)|  94.73  |          |
+| [ResNeXt29(2x64d)](https://arxiv.org/abs/1611.05431)|  94.82  |          |
+| [DenseNet121](https://arxiv.org/abs/1608.06993)     |  95.04  |          |
+| [PreActResNet18](https://arxiv.org/abs/1603.05027)  |  95.11  |          |
+| [DPN92](https://arxiv.org/abs/1707.01629)           |  95.16  |          |
+
+
+## ImageNet Accuracy
+| Model            | ImageNet Top1 | ImageNet Top5 |  Tiny ImageNet Top1  |  Tiny ImageNet Top5  |
+| :--------------: | ------------- | ------------- | -------------------- | -------------------- |
+| VGG16            |               |               |                      |                      |
+| ResNet18         |     64.33     |     85.73     | 47.23(64)/60.72(224) | 71.84(64)/82.25(224) |
+| ResNet50         |               |               |                      |                      |
+| ResNet101        |               |               |                      |                      |
+| MobileNetV2      |               |               |                      |                      |
+| ResNeXt29(32x4d) |               |               |                      |                      |
+| ResNeXt29(2x64d) |               |               |                      |                      |
+| DenseNet121      |               |               |                      |                      |
+| PreActResNet18   |               |               |                      |                      |
+| DPN92            |               |               |                      |                      |
 
