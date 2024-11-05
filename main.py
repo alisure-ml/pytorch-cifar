@@ -1,16 +1,19 @@
 import os
+import sys
 import torchvision
 from models import *
 import torch.nn as nn
+from tqdm import tqdm
 import torch.optim as optim
 from alisuretool.Tools import Tools
 import torch.backends.cudnn as cudnn
 import torchvision.transforms as transforms
+sys.path.append("./models")
 
 
 class Runner(object):
 
-    def __init__(self, root_path='/home/ubuntu/data1.5TB/cifar', model=VGG, batch_size=128, lr=0.1, name="vgg"):
+    def __init__(self, root_path='./data/cifar', model=VGG, batch_size=128, lr=0.1, name="vgg"):
         """
         # net = VGG()
         # net = ResNet18()
@@ -112,7 +115,7 @@ class Runner(object):
         train_loss = 0
         correct = 0
         total = 0
-        for batch_idx, (inputs, targets) in enumerate(self.train_loader):
+        for batch_idx, (inputs, targets) in tqdm(enumerate(self.train_loader), total=len(self.train_loader)):
             inputs, targets = inputs.to(self.device), targets.to(self.device)
             self.optimizer.zero_grad()
             outputs = self.net(inputs)
@@ -135,7 +138,7 @@ class Runner(object):
         correct = 0
         total = 0
         with torch.no_grad():
-            for batch_idx, (inputs, targets) in enumerate(self.test_loader):
+            for batch_idx, (inputs, targets) in tqdm(enumerate(self.test_loader), total=len(self.test_loader)):
                 inputs, targets = inputs.to(self.device), targets.to(self.device)
                 outputs = self.net(inputs)
                 loss = self.criterion(outputs, targets)
@@ -167,10 +170,9 @@ class Runner(object):
 
 
 if __name__ == '__main__':
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # 1
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # 1
-
-    runner = Runner(model=DPN92, batch_size=128, lr=0.01, name="DPN92")
+    runner = Runner(model=VGG, batch_size=128, lr=0.01, name="VGG")
     runner.info()
     runner.resume(is_resume=True)
 
